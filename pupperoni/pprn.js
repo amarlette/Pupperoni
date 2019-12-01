@@ -43,6 +43,7 @@
         player.setBounce(0.2);
         player.setCollideWorldBounds(true);
 
+        //copy and paste, no idea about how to generate player right
         this.anims.create({
             key: 'left',
             frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
