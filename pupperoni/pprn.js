@@ -1,42 +1,44 @@
-var demo = new Phaser.Scene('Demo');
+    var config = {
+        type: Phaser.AUTO,
+        width: 950,
+        height: 600,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 300 },
+                debug: false
+            }
+        },
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
 
-demo.preload = function () {
+    var game = new Phaser.Game(config);
 
-    this.load.image('face', 'assets/pics/bw-face.png');
+    function preload ()
+    {
+        this.load.image('floor', '/floor.png');
+        this.load.image('sofa', '/sofa.png');
+        this.load.image('star', 'assets/star.png');
+        this.load.image('bomb', 'assets/bomb.png');
+        this.load.spritesheet('dude', 
+            'assets/dude.png',
+            { frameWidth: 32, frameHeight: 48 }
+        );
+    }
 
-};
+    function create ()
+    {
+        this.add.image(400, 300, 'floor');
+        platforms = this.physics.add.staticGroup();
 
-demo.create = function () {
+        platforms.create(480, 120, 'sofa').setScale(0.35).refreshBody();
+       
+    }
 
-    console.log(this.sys.settings.key, 'is alive');
-
-    this.add.image(400, 300, 'face');
-
-    this.scene.launch('Test');
-
-};
-
-var test = new Phaser.Scene('Test');
-
-test.preload = function () {
-
-    this.load.image('barbarian', 'assets/pics/barbarian-loading.png');
-
-};
-
-test.create = function () {
-
-    console.log(this.sys.settings.key, 'is alive');
-
-    this.add.image(400, 300, 'barbarian').setScale(0.5);
-}
-
-var config = {
-    type: Phaser.CANVAS,
-    parent: 'phaser-example',
-    width: 800,
-    height: 600,
-    scene: [ demo, test ]
-};
-
-var game = new Phaser.Game(config);
+    function update ()
+    {
+    }
