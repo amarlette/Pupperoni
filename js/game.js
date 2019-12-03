@@ -2,6 +2,7 @@
 let gameScene = new Phaser.Scene('Game');
 var level = 1;
 var messagecount = 0;
+var count = 0;
 var message = [
     "Yesterday, my master named me PUPPER and brought me into this strange, new place",
     "Oh no, my master just left me in this strange, big house!"
@@ -49,16 +50,25 @@ gameScene.preload = function() {
         frameWidth: 112,
         frameHeight: 120
     });
+
+    text = this.add.text(300, 300, 'Pupperoni');
+    text.setWordWrapWidth(200);
+    text.setAlign('center');
 };
 
 // executed once, after assets were loaded
 gameScene.create = function() {
-    // if (level == 0) {
-    //     text = this.add.text(300, 300, 'Pupperoni');
-    //     timedEvent = this.time.addEvent({ delay: 500, callback: onEvent, callbackScope: this, loop: true });
+    if (level == 0) {
+        count++;
+        if (count % 1000 === 0) {
+            text.setText(message[messagecount++]);
+        }
 
+        if (messagecount === 3) {
+            level++;
+        }
 
-    // } else 
+    } else
     if (level == 1) {
 
         // livingroom
@@ -71,7 +81,7 @@ gameScene.create = function() {
         this.player = this.add.sprite(40, 350, 'player');
 
         // scale down
-        //this.player.setScale(0.5);
+        this.player.setScale(1.5);
 
         // goal
         this.treasure = this.add.sprite(this.sys.game.config.width - 80, 350, 'treasure');
@@ -99,8 +109,8 @@ gameScene.create = function() {
         // player
         this.player = this.add.sprite(40, 350, 'player');
 
-        // scale down
-        //this.player.setScale(0.5);
+        // scale up
+        this.player.setScale(1.5);
 
         // goal
         this.treasure = this.add.sprite(this.sys.game.config.width - 80, 350, 'treasure');
@@ -113,7 +123,7 @@ gameScene.create = function() {
             setXY: {
                 x: 150,
                 y: 350,
-                stepX: 200,
+                stepX: 175,
                 stepY: 20
             }
         });
@@ -129,7 +139,7 @@ gameScene.create = function() {
         this.player = this.add.sprite(40, 350, 'player');
 
         // scale down
-        //this.player.setScale(0.5);
+        this.player.setScale(1.5);
 
         // goal
         this.treasure = this.add.sprite(this.sys.game.config.width - 80, 350, 'treasure');
@@ -146,6 +156,13 @@ gameScene.create = function() {
                 stepY: 20
             }
         });
+    } else if (level == 4) {
+
+        // livingroom
+        let bg = this.add.sprite(0, 0, 'end');
+
+        // change origin to the top-left of the sprite
+        bg.setOrigin(0, 0);
     }
 
     // scale enemies
@@ -156,7 +173,6 @@ gameScene.create = function() {
     Phaser.Actions.Call(this.enemies.getChildren(), function(enemy) {
         enemy.speed = Math.random() * 2 + 1;
     }, this);
-    cursors = this.input.keyboard.createCursorKeys();
 
 
 
@@ -179,6 +195,11 @@ gameScene.update = function() {
 
         // player walks
         this.player.x += this.playerSpeed;
+    }
+
+    if (this.input.activePointer.isDown && level == 0) {
+
+        level = 1;
     }
 
 
