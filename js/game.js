@@ -11,8 +11,8 @@ var message = [
 
 // some parameters for our scene
 gameScene.init = function() {
-    this.playerSpeed = 1.5;
-    this.enemySpeed = 2;
+    this.playerSpeed = 2;
+    this.enemySpeed = 0.5;
     this.enemyMaxY = 480;
     this.enemyMinY = 320;
 }
@@ -32,21 +32,21 @@ gameScene.preload = function() {
     //this.load.image('player', 'assets/anipup1.png');
     //this.load.image('enemy1', 'assets/biggerroomba1.png');
     this.load.image('treasure', 'assets/bone.png');
-    this.load.spritesheet('player', 'assets/anipup1.png', {
-        frameWidth: 30,
+    this.load.spritesheet('pup', 'assets/anipup1.png', {
+        frameWidth: 32,
         frameHeight: 40
     });
-    this.load.spritesheet('enemy1', 'assets/biggerroomba1.png', {
+    this.load.spritesheet('roomba', 'assets/biggerroomba1.png', {
         frameWidth: 96,
         frameHeight: 40
     });
 
-    this.load.spritesheet('enemy2', 'assets/trash.png', {
+    this.load.spritesheet('trash', 'assets/anitrash1.png', {
         frameWidth: 96,
         frameHeight: 120
     });
 
-    this.load.spritesheet('enemy3', 'assets/anitoilets1.png', {
+    this.load.spritesheet('toilet', 'assets/anitoilets1.png', {
         frameWidth: 112,
         frameHeight: 120
     });
@@ -69,6 +69,7 @@ gameScene.create = function() {
         }
 
     } else
+
     if (level == 1) {
 
         // livingroom
@@ -79,6 +80,18 @@ gameScene.create = function() {
 
         // player
         this.player = this.add.sprite(40, 350, 'player');
+        this.anims.create({
+            key: 'walk',
+            frames: this.anims.generateFrameNumbers('pup', { start: 3, end: 5 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'idle',
+            frames: [{ key: 'pup', frame: 7 }],
+            frameRate: 20
+        });
 
         // scale down
         this.player.setScale(1.5);
@@ -98,6 +111,28 @@ gameScene.create = function() {
                 stepY: 20
             }
         });
+        //ROOMBA ANIMATION
+        this.anims.create({
+            key: 'move',
+            frames: this.anims.generateFrameNumbers('roomba', { start: 0, end: 14 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        //Toilet Animation
+        this.anims.create({
+            key: 'flush',
+            frames: this.anims.generateFrameNumbers('toilet', { start: 1, end: 6 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        //TRASH ANIMATION
+        this.anims.create({
+            key: 'hide',
+            frames: this.anims.generateFrameNumbers('trash', { start: 0, end: 2 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
     } else if (level == 2) {
 
         // livingroom
@@ -195,6 +230,10 @@ gameScene.update = function() {
 
         // player walks
         this.player.x += this.playerSpeed;
+        this.player.anims.play('walk', true);
+    } else {
+        this.player.anims.play('idle', true);
+
     }
 
     if (this.input.activePointer.isDown && level == 0) {
@@ -213,11 +252,20 @@ gameScene.update = function() {
     // enemy movement and collision
     let enemies = this.enemies.getChildren();
     let numEnemies = enemies.length;
+    let currentLevel = level;
 
     for (let i = 0; i < numEnemies; i++) {
 
         // move enemies
         enemies[i].y += enemies[i].speed;
+        if (currentLevel == 1) {
+            enemies[i].anims.play('move', true);
+
+        } else if (currentLevel == 2) {
+            enemies[i].anims.play('hide', true);
+        } else {
+            enemies[i].anims.play('flush', true);
+        }
 
         // reverse movement if reached the edges
         if (enemies[i].y >= this.enemyMaxY && enemies[i].speed > 0) {
